@@ -1,55 +1,44 @@
+/*
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-// ReSharper disable All
-
 public static class GameEventBus
 {
     private static readonly IDictionary<GameEventType, UnityEvent<GameEventContext>>
-        _events = new Dictionary<GameEventType, UnityEvent<GameEventContext>>();
-}
+        Events = new Dictionary<GameEventType, UnityEvent<GameEventContext>>();
 
-[System.Serializable]
-public class GameEventContext
-{
-    public int intValue;
-    public float floatValue;
-    public string stringValue;
-    public Vector3 vectorValue;
+    public static void Register(GameEventType eventType, UnityAction<GameEventContext> listener)
+    {
+        if (Events.TryGetValue(eventType, out var thisEvent))
+        {
+            thisEvent.AddListener(listener);
+        }
+        else
+        {
+            thisEvent = new UnityEvent<GameEventContext>();
+            thisEvent.AddListener(listener);
+            Events.Add(eventType, thisEvent);
+        }
+    }
 
-    public GameEventContext(int value)
+    public static void UnRegister(GameEventType eventType, UnityAction<GameEventContext> listener)
     {
-        intValue = value;
+        if (Events.TryGetValue(eventType, out var thisEvent))
+        {
+            thisEvent.RemoveListener(listener);
+            Events.Remove(eventType);
+        }
     }
-    
-    public GameEventContext(float value)
+
+    public static void Raise(GameEventType eventType, GameEventContext ctx)
     {
-        floatValue = value;
-    }
-    
-    public GameEventContext(string value)
-    {
-        stringValue = value;
-    }
-    
-    public GameEventContext(Vector3 value)
-    {
-        vectorValue = value;
-    }
-    
-    public GameEventContext(string value, Vector3 vector)
-    {
-        stringValue = value;
-        vectorValue = vector;
+        if (Events.TryGetValue(eventType, out var thisEvent))
+        {
+            thisEvent?.Invoke(ctx);
+        }
     }
 }
+*/
 
-public enum GameEventType
-{
-    OnGameStart,
-    OnSceneLoad,
-    OnPause,
-    OnMute,
-    OnRoundStart
-}
+

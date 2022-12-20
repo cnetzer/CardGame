@@ -18,6 +18,7 @@ public class SceneManagement : MonoBehaviour
     private void OnLoadScene(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("Scene loaded: " + scene.name);
+        Actions.OnLoadScene?.Invoke(new GameEventContext(scene.name));
     }
 
     private void OnEnable()
